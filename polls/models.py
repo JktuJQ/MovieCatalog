@@ -31,7 +31,7 @@ class Poll(MyModel):
 class Choice(MyModel):
     name = models.CharField(max_length=200, verbose_name="Вариант")
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE, verbose_name="Опрос")
-    votes = models.IntegerField(default=0, verbose_name="Кол-во голосов")
+    votes = models.ManyToManyField(User, verbose_name="Проголосовавшие")
 
     class Meta:
         ordering = ["name"]
@@ -40,15 +40,3 @@ class Choice(MyModel):
 
     def __str__(self):
         return self.name
-
-
-class Vote(MyModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Голосующий")
-    choice = models.ForeignKey(Choice, on_delete=models.CASCADE, verbose_name="Вариант")
-
-    class Meta:
-        verbose_name = 'Голос'
-        verbose_name_plural = 'Голоса'
-
-    def __str__(self):
-        return f'{self.poll.theme} - {self.choice.name} - {self.user.username}'

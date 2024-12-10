@@ -1,6 +1,6 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
-  // Created: 2024-12-09 19:53
+  // Created: 2024-12-10 22:17
   // Cli Options: -a --dot -o myapp_models.dot
 
   fontname = "Roboto"
@@ -906,64 +906,6 @@ digraph model_graph {
     </TD></TR>
   
   
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">votes</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">IntegerField</FONT>
-    </TD></TR>
-  
-  
-    </TABLE>
-    >]
-
-  polls_models_Vote [label=<
-    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
-    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
-    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Vote<BR/>&lt;<FONT FACE="Roboto"><I>MyModel</I></FONT>&gt;
-    </B></FONT></TD></TR>
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>id</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>choice</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>user</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
     </TABLE>
     >]
 
@@ -1055,16 +997,10 @@ digraph model_graph {
   polls_models_Choice -> polls_models_Poll
   [label=" poll (choice)"] [arrowhead=none, arrowtail=dot, dir=both];
 
+  polls_models_Choice -> django_contrib_auth_models_User
+  [label=" votes (choice)"] [arrowhead=dot arrowtail=dot, dir=both];
+
   polls_models_Choice -> films_models_MyModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-
-  polls_models_Vote -> django_contrib_auth_models_User
-  [label=" user (vote)"] [arrowhead=none, arrowtail=dot, dir=both];
-
-  polls_models_Vote -> polls_models_Choice
-  [label=" choice (vote)"] [arrowhead=none, arrowtail=dot, dir=both];
-
-  polls_models_Vote -> films_models_MyModel
   [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
 
