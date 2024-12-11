@@ -5,7 +5,12 @@ from films.models import MyModel, Film
 
 
 class Question(MyModel):
+    question_types = (("Один", "Один вариант ответа"),("Несколько", "Несколько вариантов ответа"))
+
     name = models.CharField("Вопрос", max_length=1024)
+    question_type = models.CharField(max_length=10, choices=question_types, default=question_types[0])
+
+    position = models.PositiveIntegerField("Позиция вопроса")
 
     class Meta:
         ordering = ["name"]
@@ -20,6 +25,8 @@ class Choice(MyModel):
     name = models.CharField(max_length=200, verbose_name="Вариант ответа")
     question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="Вопрос")
     votes = models.ManyToManyField(User, verbose_name="Проголосовавшие")
+
+    position = models.PositiveIntegerField("Позиция варианта ответа")
 
     class Meta:
         ordering = ["name"]
