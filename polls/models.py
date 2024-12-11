@@ -1,42 +1,48 @@
 from django.db import models
 from django.contrib.auth.forms import User
-import datetime
 
-from films.models import MyModel, Person, Film
+from films.models import MyModel, Film
+
+
+class Question(MyModel):
+    name = models.CharField("Вопрос", max_length=1024)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = 'Вопрос для голосования'
+        verbose_name_plural = 'Вопросы для голосования'
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class Choice(MyModel):
+    name = models.CharField(max_length=200, verbose_name="Вариант ответа")
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="Вопрос")
+    votes = models.ManyToManyField(User, verbose_name="Проголосовавшие")
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = 'Вариант ответа'
+        verbose_name_plural = 'Варианты ответа'
+
+    def __str__(self):
+        return self.name
 
 
 class Poll(MyModel):
-    name = models.CharField("Тема", max_length=1024)
+    theme = models.CharField("Тема опроса", max_length=1024)
     description = models.TextField("Описание", blank=True, null=True)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор опроса")
     film = models.ForeignKey(Film, on_delete=models.CASCADE, verbose_name="Фильм")
 
-    def user_voted(self, user):
-        user_votes = user.vote_set.all()
-        done = user_votes.filter(poll=self)
-        if done.exists():
-            return False
-        return True
+    polls = models.ManyToManyField(Question, verbose_name="Опросы")
 
     class Meta:
-        ordering = ["name"]
-        verbose_name = 'Голосование'
-        verbose_name_plural = 'Голосования'
+        ordering = ["theme"]
+        verbose_name = 'Опрос'
+        verbose_name_plural = 'Опросы'
 
     def __str__(self):
-        return f'{self.poll.theme}'
-
-
-class Choice(MyModel):
-    name = models.CharField(max_length=200, verbose_name="Вариант")
-    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, verbose_name="Опрос")
-    votes = models.ManyToManyField(User, verbose_name="Проголосовавшие")
-
-    class Meta:
-        ordering = ["name"]
-        verbose_name = 'Вариант'
-        verbose_name_plural = 'Варианты'
-
-    def __str__(self):
-        return self.name
+        return self.theme
