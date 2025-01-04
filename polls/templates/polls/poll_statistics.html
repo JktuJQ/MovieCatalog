@@ -1,7 +1,16 @@
-{% for stat in statistics %}
-    <h3>{{ stat.question.name }}</h3>
-    {% for choice_stat in stat.choices %}
-        <p>{{ choice_stat.choice.name }}: {{ choice_stat.vote_count }} votes</p>
+{% extends 'films/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Статистика опроса "{{ poll.theme }}"</h1>
+    {% for stat in statistics %}
+        <h3>{{ stat.question.name }}</h3>
+        <ul>
+            {% for choice_stat in stat.choices %}
+                <li>{{ choice_stat.choice.name }}: {{ choice_stat.vote_count }} голосов</li>
+            {% endfor %}
+        </ul>
+        <hr>
     {% endfor %}
-    <hr>
-{% endfor %}
+</div>
+{% endblock %}

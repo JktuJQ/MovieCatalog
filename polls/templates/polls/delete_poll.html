@@ -1,0 +1,13 @@
+{% extends 'films/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Подтвердите удаление опроса "{{ poll.theme }}"</h1>
+    <p>Вы действительно хотите удалить этот опрос? Это действие нельзя отменить.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Удалить Опрос</button>
+        <a href="{% url 'films:film_detail' poll.film.id %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

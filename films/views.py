@@ -2,7 +2,7 @@ from dal import autocomplete
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import user_passes_test
 from .models import Country, Film, Genre, Person
-from polls.models import Poll, Choice
+from polls.views import has_completed_poll
 from .forms import CountryForm, GenreForm, FilmForm, PersonForm
 from .helpers import paginate
 from django.contrib import messages
@@ -130,7 +130,19 @@ def film_list(request):
 
 def film_detail(request, id):
     film = get_object_or_404(Film, pk=id)
-    return render(request, 'films/film/detail.html', {'film': film})
+    user = request.user
+    polls = film.poll_set.all()
+    poll_list = []
+
+    completed = False
+    for poll in polls:
+        if user == poll.author:
+            completed = True
+        else:
+            completed = has_completed_poll(user, poll)
+        poll_list.append({'poll': poll, 'completed': completed})
+
+    return render(request, 'films/film/detail.html', {'film': film, 'poll_list': poll_list})
 
 
 @user_passes_test(check_admin)

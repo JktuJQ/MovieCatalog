@@ -113,14 +113,25 @@
 {% endblock %}
 
 {% block polls %}
+  {% if user.is_authenticated %}
+    <a href="{% url 'polls:create_poll' film.id %}" class="btn btn-success mt-3">Создать Опрос</a>
+  {% endif %}
   {% if film.poll_set.exists %}
     <h2>Опросы для этого фильма</h2>
-    {% for poll in film.poll_set.all %}
-    <h2>{{ poll.theme }}</h2>
-    <form method="post" action="{% url 'polls:submit_poll' poll.id %}">
+    {% for poll_item in poll_list %}
+    <h2>{{ poll_item.poll.theme }}</h2>
+    {% if poll_item.completed %}
+        <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}">View Statistics</a>
+    {% endif %}
+    {% if user == poll_item.poll.author %}
+    <a href="{% url 'polls:confirm_delete_poll' poll_item.poll.id %}">
+        <button class="btn btn-danger btn-sm">Удалить</button>
+    </a>
+{% endif %}
+    <form method="post" action="{% url 'polls:submit_poll' poll_item.poll.id %}">
         {% csrf_token %}
-        <input type="hidden" name="poll_id" value="{{ poll.id }}">
-        {% for question in poll.questions.all %}
+        <input type="hidden" name="poll_id" value="{{ poll_item.poll.id }}">
+        {% for question in poll_item.poll.questions.all %}
             <h3>{{ question.name }}</h3>
             {% if question.question_type == "Один вариант ответа" %}
                 <div>

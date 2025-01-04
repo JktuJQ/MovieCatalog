@@ -1,0 +1,23 @@
+{% extends 'films/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Создать Опрос для Фильма "{{ film.name }}"</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ poll_form.as_p }}
+        {% for form in forms %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    {{ form.question_form.as_p }}
+                    <h3>Выборы для Вопроса</h3>
+                    {% for choice_form in form.choice_formset %}
+                        {{ choice_form.as_p }}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Создать Опрос</button>
+    </form>
+</div>
+{% endblock %}

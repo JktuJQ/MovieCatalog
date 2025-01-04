@@ -27,7 +27,7 @@ class Question(MyModel):
 class Choice(MyModel):
     name = models.CharField(max_length=200, verbose_name="Вариант ответа")
     question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="Вопрос")
-    votes = models.ManyToManyField(User, verbose_name="Проголосовавшие")
+    votes = models.ManyToManyField(User, verbose_name="Проголосовавшие", blank=True)
 
     position = models.PositiveIntegerField("Позиция варианта ответа")
 
