@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("", include("films.urls")),
+    path('polls/', include('polls.urls', namespace='polls')),
     path("signup/", include("signup.urls")),
     path('auth/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),

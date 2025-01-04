@@ -2,6 +2,7 @@ from dal import autocomplete
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import user_passes_test
 from .models import Country, Film, Genre, Person
+from polls.models import Poll, Choice
 from .forms import CountryForm, GenreForm, FilmForm, PersonForm
 from .helpers import paginate
 from django.contrib import messages
@@ -128,11 +129,8 @@ def film_list(request):
 
 
 def film_detail(request, id):
-    queryset = Film.objects.prefetch_related("country", "genres", "director",
-                                             "people")
-    film = get_object_or_404(queryset, id=id)
-    return render(request, 'films/film/detail.html',
-                  {'film': film})
+    film = get_object_or_404(Film, pk=id)
+    return render(request, 'films/film/detail.html', {'film': film})
 
 
 @user_passes_test(check_admin)
