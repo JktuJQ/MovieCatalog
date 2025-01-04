@@ -1,9 +1,8 @@
-{% extends 'films/base.html' %}
 
 {% block content %}
 <div class="container">
     <h1>Создать Опрос для Фильма "{{ film.name }}"</h1>
-    <form method="post">
+    <form method="post" class="form">
         {% csrf_token %}
         {{ poll_form.as_p }}
         {% for form in forms %}
@@ -12,7 +11,9 @@
                     {{ form.question_form.as_p }}
                     <h3>Выборы для Вопроса</h3>
                     {% for choice_form in form.choice_formset %}
-                        {{ choice_form.as_p }}
+                        <div class="form-group">
+                            {{ choice_form.as_p }}
+                        </div>
                     {% endfor %}
                 </div>
             </div>

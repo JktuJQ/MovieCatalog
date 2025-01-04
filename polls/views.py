@@ -106,7 +106,6 @@ def has_completed_poll(user, poll):
             user_votes = question.choice_set.filter(votes=user)
             if not user_votes.exists():
                 return False
-        break
     return True
 
 

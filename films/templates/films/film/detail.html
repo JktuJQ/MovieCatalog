@@ -1,5 +1,6 @@
 {% extends 'films/base.html' %}
 {% load films_tags %}
+{% load django_bootstrap5 %}
 
 {% block breadcrumb %}
 <nav>
@@ -116,43 +117,81 @@
   {% if user.is_authenticated %}
     <a href="{% url 'polls:create_poll' film.id %}" class="btn btn-success mt-3">Создать Опрос</a>
   {% endif %}
-  {% if film.poll_set.exists %}
-    <h2>Опросы для этого фильма</h2>
-    {% for poll_item in poll_list %}
-    <h2>{{ poll_item.poll.theme }}</h2>
-    {% if poll_item.completed %}
-        <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}">View Statistics</a>
-    {% endif %}
-    {% if user == poll_item.poll.author %}
-    <a href="{% url 'polls:confirm_delete_poll' poll_item.poll.id %}">
-        <button class="btn btn-danger btn-sm">Удалить</button>
-    </a>
-{% endif %}
-    <form method="post" action="{% url 'polls:submit_poll' poll_item.poll.id %}">
-        {% csrf_token %}
-        <input type="hidden" name="poll_id" value="{{ poll_item.poll.id }}">
-        {% for question in poll_item.poll.questions.all %}
-            <h3>{{ question.name }}</h3>
-            {% if question.question_type == "Один вариант ответа" %}
-                <div>
-                    {% for choice in question.choice_set.all %}
-                        <input type="radio" name="question_{{ question.id }}" value="{{ choice.id }}" required>
-                        <label>{{ choice.name }}</label><br>
-                    {% endfor %}
+          {% if film.poll_set.exists %}
+            <h2 class="mt-5">Опросы для этого фильма</h2>
+            {% for poll_item in poll_list %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h2>{{ poll_item.poll.theme }}</h2>
+                        {{ poll_item.poll.description }}
+                        {% if poll_item.completed %}
+                            <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}" class="btn btn-link float-end">Посмотреть Статистику</a>
+                        {% endif %}
+                        {% if user == poll_item.poll.author %}
+                            <a href="{% url 'polls:confirm_delete_poll' poll_item.poll.id %}" class="btn btn-danger btn-sm float-end me-2">Удалить</a>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'polls:submit_poll' poll_item.poll.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="poll_id" value="{{ poll_item.poll.id }}">
+                            {% for question in poll_item.poll.questions.all %}
+                                <h3>{{ question.name }}</h3>
+                                {% if question.question_type == "Один вариант ответа" %}
+                                    {% for choice in question.choice_set.all %}
+                                        <div class="form-check">
+                                            <input type="radio" class="form-check-input" name="question_{{ question.id }}" value="{{ choice.id }}" required>
+                                            <label class="form-check-label">{{ choice.name }}</label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for choice in question.choice_set.all %}
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="question_{{ question.id }}" value="{{ choice.id }}">
+                                            <label class="form-check-label">{{ choice.name }}</label>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary mt-3">Проголосовать</button>
+                        </form>
+                    </div>
                 </div>
-            {% else %}
-                <div>
-                    {% for choice in question.choice_set.all %}
-                        <input type="checkbox" name="question_{{ question.id }}" value="{{ choice.id }}" required>
-                        <label>{{ choice.name }}</label><br>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endfor %}
-        <button type="submit">Проголосовать</button>
-    </form>
+
 
     <script>
+function validateForm() {
+        // Get all checkbox groups for multiple-choice questions
+        var checkboxGroups = document.querySelectorAll('input[name^="question_"][type="checkbox"]');
+
+        // Create an object to group checkboxes by question
+        var groups = {};
+        checkboxGroups.forEach(function(checkbox) {
+            var name = checkbox.name;
+            if (!groups[name]) {
+                groups[name] = [];
+            }
+            groups[name].push(checkbox);
+        });
+
+        // Check each group to see if at least one checkbox is checked
+        for (var group in groups) {
+            var checked = false;
+            groups[group].forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    checked = true;
+                }
+            });
+            if (!checked) {
+                alert("Выберите хотя бы один вариант ответа");
+                return false;
+            }
+        }
+
+        // If all groups have at least one checkbox checked
+        return true;
+    }
+
     document.querySelector('form').addEventListener('submit', function(event) {
         let form = event.target;
         let questions = form.querySelectorAll('h3');

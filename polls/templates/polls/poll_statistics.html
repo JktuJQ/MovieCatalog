@@ -1,13 +1,14 @@
 {% extends 'films/base.html' %}
+{% load films_tags %}
 
 {% block content %}
 <div class="container">
     <h1>Статистика опроса "{{ poll.theme }}"</h1>
     {% for stat in statistics %}
         <h3>{{ stat.question.name }}</h3>
-        <ul>
+        <ul class="list-group">
             {% for choice_stat in stat.choices %}
-                <li>{{ choice_stat.choice.name }}: {{ choice_stat.vote_count }} голосов</li>
+                <li class="list-group-item">{{ choice_stat.choice.name }}: {{ choice_stat.vote_count }} голос{{choice_stat.vote_count|ru_plural:',а,ов'}} </li>
             {% endfor %}
         </ul>
         <hr>

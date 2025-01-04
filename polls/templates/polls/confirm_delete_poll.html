@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Подтвердите удаление опроса "{{ poll.theme }}"</h1>
     <p>Вы действительно хотите удалить этот опрос? Это действие нельзя отменить.</p>
-    <form method="post" action="{% url 'polls:delete_poll' poll.id %}">
+    <form method="post" action="{% url 'polls:delete_poll' poll.id %}" class="form">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Удалить Опрос</button>
         <a href="{% url 'films:film_detail' id=poll.film.id %}" class="btn btn-secondary">Отмена</a>
