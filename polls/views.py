@@ -5,7 +5,7 @@ from films.models import Film
 
 from django.forms import modelformset_factory
 from django.forms.utils import ErrorList
-from .forms import PollForm, QuestionForm, ChoiceFormSet, ChoiceUpdateFormSet
+from .forms import PollForm, QuestionForm, ChoiceForm, ChoiceFormSet, ChoiceUpdateFormSet
 from .models import Poll, Question, Choice
 
 
@@ -54,6 +54,29 @@ def create_question(request, poll_id):
         'form': form,
         'formset': formset,
         'poll': poll,
+    })
+
+
+@login_required
+def create_choice(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+
+    if request.user != question.poll.author:
+        return redirect('films:film_detail', id=question.poll.film.id)
+
+    if request.method == 'POST':
+        form = ChoiceForm(request.POST)
+        if form.is_valid():
+            choice = form.save(commit=False)
+            choice.question = question
+            choice.save()
+            return redirect('films:film_detail', id=question.poll.film.id)
+    else:
+        form = ChoiceForm()
+
+    return render(request, 'polls/create_choice.html', {
+        'form': form,
+        'question': question,
     })
 
 
