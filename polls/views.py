@@ -150,17 +150,13 @@ def update_question(request, question_id):
     if request.method == 'POST':
         formset = ChoiceFormSet(request.POST, queryset=question.choice_set.all())
         if formset.is_valid():
-            # Count non-deleted choices
             non_deleted_choices = sum(1 for form in formset if not form.cleaned_data.get('DELETE'))
             if non_deleted_choices < 2:
-                # Add a non-form error to the formset
                 formset._non_form_errors = ErrorList(["A question must have at least two choices."])
             else:
-                # Save changes and delete marked choices
                 instances = formset.save(commit=False)
                 for instance in instances:
                     instance.save()
-                # Process deletions
                 for form in formset:
                     if form.cleaned_data.get('DELETE'):
                         form.instance.delete()
