@@ -21,7 +21,8 @@ class Poll(MyModel):
 
 
 class Question(MyModel):
-    question_types = (("Один вариант ответа", "Один вариант ответа"), ("Несколько вариантов ответа", "Несколько вариантов ответа"))
+    question_types = (
+    ("Один вариант ответа", "Один вариант ответа"), ("Несколько вариантов ответа", "Несколько вариантов ответа"))
 
     name = models.CharField("Вопрос", max_length=1024)
     question_type = models.CharField("Тип вопроса", max_length=30, choices=question_types, default=question_types[0])

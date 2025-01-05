@@ -5,49 +5,51 @@
 <div class="container">
     <h1>Статистика опроса "{{ poll.theme }}"</h1>
     {% for stat in statistics %}
-        <h3>{{ stat.question.name }}</h3>
-        <canvas id="chart_{{ stat.question.id }}"></canvas>
-        <ul class="list-group">
-            {% for choice_stat in stat.choices %}
-                <li class="list-group-item">{{ choice_stat.choice.name }}: {{ choice_stat.vote_count }} голос{{choice_stat.vote_count|ru_plural:',а,ов'}}</li>
-            {% endfor %}
-        </ul>
-        <hr>
+    <h3>{{ stat.question.name }}</h3>
+    <canvas id="chart_{{ stat.question.id }}"></canvas>
+    <ul class="list-group">
+        {% for choice_stat in stat.choices %}
+        <li class="list-group-item">{{ choice_stat.choice.name }}: {{ choice_stat.vote_count }}
+            голос{{choice_stat.vote_count|ru_plural:',а,ов'}}
+        </li>
+        {% endfor %}
+    </ul>
+    <hr>
     {% endfor %}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        {% for stat in statistics %}
-            var ctx = document.getElementById('chart_{{ stat.question.id }}').getContext('2d');
-            var labels = [];
-            var data = [];
-            {% for choice_stat in stat.choices %}
-                labels.push("{{ choice_stat.choice.name }}");
-                data.push({{ choice_stat.vote_count }});
-            {% endfor %}
+<script>
+    {% for stat in statistics %}
+        var ctx = document.getElementById('chart_{{ stat.question.id }}').getContext('2d');
+        var labels = [];
+        var data = [];
+        {% for choice_stat in stat.choices %}
+            labels.push("{{ choice_stat.choice.name }}");
+            data.push({{ choice_stat.vote_count }});
+        {% endfor %}
 
-            var maximum = data.reduce((a, b) => a + b, 0)
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '# голосов',
-                        data: data,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: maximum,
-                        }
+        var maximum = data.reduce((a, b) => a + b, 0)
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '# голосов',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: maximum,
                     }
                 }
-            });
-        {% endfor %}
-    </script>
+            }
+        });
+    {% endfor %}
+</script>
 {% endblock %}

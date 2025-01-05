@@ -114,100 +114,119 @@
 {% endblock %}
 
 {% block polls %}
-  {% if user.is_authenticated %}
-    <a href="{% url 'polls:create_poll' film.id %}" class="btn btn-success mt-3">Создать Опрос</a>
-  {% endif %}
-  {% if film.poll_set.exists %}
-    <h2 class="mt-5">Опросы для этого фильма</h2>
-    {% for poll_item in poll_list %}
-      <div class="card mt-3">
-        <div class="card-header">
-          <h2>{{ poll_item.poll.theme }}</h2>
-          {{ poll_item.poll.description }}
-          <div class="d-flex justify-content-end">
+{% if user.is_authenticated %}
+<a href="{% url 'polls:create_poll' film.id %}" class="btn btn-success mt-3">Создать Опрос</a>
+{% endif %}
+{% if film.poll_set.exists %}
+<h2 class="mt-5">Опросы для этого фильма</h2>
+{% for poll_item in poll_list %}
+<div class="card mt-3">
+    <div class="card-header">
+        <h2>{{ poll_item.poll.theme }}</h2>
+        {{ poll_item.poll.description }}
+        <div class="d-flex justify-content-end">
             {% if user == poll_item.poll.author %}
-              <a href="{% url 'polls:create_question' poll_item.poll.id %}" class="btn btn-primary btn-sm mx-2">Добавить вопрос</a>
-              <a href="{% url 'polls:update_poll' poll_item.poll.id %}" class="btn btn-secondary btn-sm mx-2">Изменить порядок вопросов</a>
-              <a href="{% url 'polls:confirm_delete_poll' poll_item.poll.id %}" class="btn btn-danger btn-sm mx-2">Удалить опрос</a>
+            <a href="{% url 'polls:create_question' poll_item.poll.id %}" class="btn btn-primary btn-sm mx-2">Добавить
+                вопрос</a>
+            <a href="{% url 'polls:update_poll' poll_item.poll.id %}"
+               class="btn btn-secondary btn-sm mx-2 {% if not poll_item.poll.questions.exists %} disabled {% endif %}">Изменить
+                порядок вопросов</a>
+            <a href="{% url 'polls:confirm_delete_poll' poll_item.poll.id %}" class="btn btn-danger btn-sm mx-2">Удалить
+                опрос</a>
             {% endif %}
-              <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}" class="btn btn-link mx-2">Посмотреть статистику</a>
-          </div>
+            <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}"
+               class="btn btn-link mx-2 {% if not poll_item.poll.questions.exists %} disabled {% endif %}">Посмотреть
+                статистику</a>
         </div>
-        <div class="card-body">
-          <form method="post" action="{% url 'polls:submit_poll' poll_item.poll.id %}" id="{{ poll_item.poll.id}}">
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'polls:submit_poll' poll_item.poll.id %}" id="{{ poll_item.poll.id}}">
             {% csrf_token %}
             <input type="hidden" name="poll_id" value="{{ poll_item.poll.id }}">
             {% for question in poll_item.poll.questions.all %}
-              <div class="card mt-3">
-                <div class="card-header" id="question_{{ question.id }}" data-question-type="{{ question.question_type }}">
-                  <b>{{ question.name }}</b>
+            <div class="card mt-3">
+                <div class="card-header" id="question_{{ question.id }}"
+                     data-question-type="{{ question.question_type }}">
+                    <b>{{ question.name }}</b>
                     <div class="d-flex justify-content-end">
-                  {% if user == poll_item.poll.author %}
-                        <a href="{% url 'polls:create_choice' question.id %}" class="btn btn-primary btn-sm mx-2">Добавить вариант ответа</a>
-                    <a href="{% url 'polls:update_question' question.id %}" class="btn btn-sm btn-secondary mx-2">Изменить вопрос</a>
-                    <a href="{% url 'polls:confirm_delete_question' question.id %}" class="btn btn-sm btn-danger mx-2">Удалить вопрос</a>
-                  {% endif %}
+                        {% if user == poll_item.poll.author %}
+                        <a href="{% url 'polls:create_choice' question.id %}" class="btn btn-primary btn-sm mx-2">Добавить
+                            вариант ответа</a>
+                        <a href="{% url 'polls:update_question' question.id %}" class="btn btn-sm btn-secondary mx-2">Изменить
+                            вопрос</a>
+                        <a href="{% url 'polls:confirm_delete_question' question.id %}"
+                           class="btn btn-sm btn-danger mx-2">Удалить вопрос</a>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="card-body">
-                  {% if question.question_type == "Один вариант ответа" %}
+                    {% if question.question_type == "Один вариант ответа" %}
                     {% for choice in question.choice_set.all %}
-                      <div class="form-check">
-                        <input type="radio" class="form-check-input" name="question_{{ question.id }}" value="{{ choice.id }}" required>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" name="question_{{ question.id }}"
+                               value="{{ choice.id }}" required>
                         <label class="form-check-label">{{ choice.name }}</label>
-                      </div>
+                    </div>
                     {% endfor %}
-                  {% else %}
+                    {% else %}
                     {% for choice in question.choice_set.all %}
-                      <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="question_{{ question.id }}" value="{{ choice.id }}">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="question_{{ question.id }}"
+                               value="{{ choice.id }}">
                         <label class="form-check-label">{{ choice.name }}</label>
-                      </div>
+                    </div>
                     {% endfor %}
-                  {% endif %}
+                    {% endif %}
                 </div>
-              </div>
+            </div>
             {% endfor %}
-            <button {% if not poll_item.poll.questions.exists %} disabled {% endif %} type="submit" class="btn btn-primary mt-3">Проголосовать</button>
-          </form>
-        </div>
-      </div>
-    {% endfor %}
-
+            <button {% if not poll_item.poll.questions.exists %} disabled {% endif %} type="submit"
+                    class="btn btn-primary mt-3">Проголосовать
+            </button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+<style>
+    a.disabled {
+        pointer-events: none;
+        color: #ccc;
+    }
+</style>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('form').forEach(function(form) {
-        form.addEventListener('submit', function(event) {
-            var inputs = form.querySelectorAll('input[type="radio"], input[type="checkbox"]');
-            var inputGroups = {};
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('form').forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                var inputs = form.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+                var inputGroups = {};
 
-            inputs.forEach(function(input) {
-                if (!inputGroups[input.name]) {
-                    inputGroups[input.name] = [];
-                }
-                inputGroups[input.name].push(input);
-            });
-
-            for (var groupName in inputGroups) {
-                var group = inputGroups[groupName];
-                var isGroupAnswered = false;
-                group.forEach(function(input) {
-                    if (input.checked) {
-                        isGroupAnswered = true;
+                inputs.forEach(function(input) {
+                    if (!inputGroups[input.name]) {
+                        inputGroups[input.name] = [];
                     }
+                    inputGroups[input.name].push(input);
                 });
-                if (!isGroupAnswered) {
-                    alert("Необходимо ответить на все вопросы.");
-                    event.preventDefault();
-                    return;
+
+                for (var groupName in inputGroups) {
+                    var group = inputGroups[groupName];
+                    var isGroupAnswered = false;
+                    group.forEach(function(input) {
+                        if (input.checked) {
+                            isGroupAnswered = true;
+                        }
+                    });
+                    if (!isGroupAnswered) {
+                        alert("Необходимо ответить на все вопросы.");
+                        event.preventDefault();
+                        return;
+                    }
                 }
-            }
+            });
         });
     });
-});
 </script>
-  {% else %}
-    <p>Нет опросов для этого фильма.</p>
-  {% endif %}
+{% else %}
+<p>Нет опросов для этого фильма.</p>
+{% endif %}
 <br>
 {% endblock %}

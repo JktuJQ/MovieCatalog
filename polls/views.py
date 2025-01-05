@@ -168,7 +168,6 @@ def update_question(request, question_id):
     else:
         formset = ChoiceFormSet(queryset=question.choice_set.all())
 
-
     return render(request, 'polls/update_question.html', {
         'formset': formset,
         'question': question,

@@ -10,25 +10,25 @@
 
         <div class="list-group">
             {% for form in formset %}
-                <div class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="me-3">
-                            <h5 class="mb-1">{{ form.instance.name }}</h5>
-                            <small class="text-muted">Текущая позиция: {{ form.instance.position }}</small>
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <h5 class="mb-1">{{ form.instance.name }}</h5>
+                        <small class="text-muted">Текущая позиция: {{ form.instance.position }}</small>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        {{ form.id }}
+                        <div class="form-group mb-0 me-3">
+                            {{ form.position.label_tag }}
+                            {{ form.position }}
                         </div>
-                        <div class="d-flex align-items-center">
-                            {{ form.id }}
-                            <div class="form-group mb-0 me-3">
-                                {{ form.position.label_tag }}
-                                {{ form.position }}
-                            </div>
-                            <div class="form-check">
-                                {{ form.DELETE.label_tag }}
-                                {{ form.DELETE }}
-                            </div>
+                        <div class="form-check">
+                            {{ form.DELETE.label_tag }}
+                            {{ form.DELETE }}
                         </div>
                     </div>
                 </div>
+            </div>
             {% endfor %}
         </div>
 
@@ -38,12 +38,12 @@
         </div>
 
         {% if formset.non_form_errors %}
-    <div class="alert alert-danger mt-3">
-        {% for error in formset.non_form_errors %}
+        <div class="alert alert-danger mt-3">
+            {% for error in formset.non_form_errors %}
             {{ error }}
-        {% endfor %}
-    </div>
-{% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
 
     </form>
 </div>

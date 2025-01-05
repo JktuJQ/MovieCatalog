@@ -8,9 +8,9 @@
             <h1>Создание опроса</h1>
         </div>
         <div class="card-body">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <input type="hidden" name="film" value="{{ film.id }}" class="form-control">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <input type="hidden" name="film" value="{{ film.id }}" class="form-control">
 
         </div>
     </div>
