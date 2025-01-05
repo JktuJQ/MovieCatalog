@@ -124,19 +124,21 @@
                     <div class="card-header">
                         <h2>{{ poll_item.poll.theme }}</h2>
                         {{ poll_item.poll.description }}
-                        {% if poll_item.completed %}
-                            <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}" class="btn btn-link float-end">Посмотреть Статистику</a>
-                        {% endif %}
+                        <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}" class="btn btn-link float-end">Посмотреть статистику</a>
                         {% if user == poll_item.poll.author %}
+                            <a href="{% url 'polls:create_question' poll_item.poll.id %}" class="btn btn-primary btn-sm float-end me-2">Добавить вопрос</a>
                             <a href="{% url 'polls:confirm_delete_poll' poll_item.poll.id %}" class="btn btn-danger btn-sm float-end me-2">Удалить</a>
                         {% endif %}
                     </div>
                     <div class="card-body">
-                        <form method="post" action="{% url 'polls:submit_poll' poll_item.poll.id %}">
+                        <form method="post" action="{% url 'polls:submit_poll' poll_item.poll.id %}" onsubmit="validateForm()">
                             {% csrf_token %}
                             <input type="hidden" name="poll_id" value="{{ poll_item.poll.id }}">
                             {% for question in poll_item.poll.questions.all %}
                                 <h3>{{ question.name }}</h3>
+                                {% if user == poll_item.poll.author %}
+                                <a href="{% url 'polls:confirm_delete_question' question.id %}" class="btn btn-sm btn-danger">Удалить вопрос</a>
+                                {% endif %}
                                 {% if question.question_type == "Один вариант ответа" %}
                                     {% for choice in question.choice_set.all %}
                                         <div class="form-check">
@@ -153,42 +155,25 @@
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
-                            <button type="submit" class="btn btn-primary mt-3">Проголосовать</button>
+                            <button {% if not poll_item.poll.questions.exists %} disabled {% endif %} type="submit" class="btn btn-primary mt-3">Проголосовать</button>
                         </form>
                     </div>
                 </div>
 
 
-    <script>
-function validateForm() {
-        // Get all checkbox groups for multiple-choice questions
-        var checkboxGroups = document.querySelectorAll('input[name^="question_"][type="checkbox"]');
-
-        // Create an object to group checkboxes by question
-        var groups = {};
-        checkboxGroups.forEach(function(checkbox) {
-            var name = checkbox.name;
-            if (!groups[name]) {
-                groups[name] = [];
+<script>
+    function validateForm() {
+        var checkboxes = document.querySelectorAll('input[type=checkbox]:required');
+        var isChecked = false;
+        checkboxes.forEach(function(checkbox) {
+            if (checkbox.checked) {
+                isChecked = true;
             }
-            groups[name].push(checkbox);
         });
-
-        // Check each group to see if at least one checkbox is checked
-        for (var group in groups) {
-            var checked = false;
-            groups[group].forEach(function(checkbox) {
-                if (checkbox.checked) {
-                    checked = true;
-                }
-            });
-            if (!checked) {
-                alert("Выберите хотя бы один вариант ответа");
-                return false;
-            }
+        if (!isChecked) {
+            alert('Please select at least one option.');
+            return false;
         }
-
-        // If all groups have at least one checkbox checked
         return true;
     }
 
@@ -218,4 +203,5 @@ function validateForm() {
   {% else %}
     <p>Нет опросов для этого фильма.</p>
   {% endif %}
+<br>
 {% endblock %}

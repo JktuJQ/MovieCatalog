@@ -1,0 +1,64 @@
+{% extends 'films/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  <script>
+    function updatePositions() {
+      var positionFields = document.querySelectorAll('input[name$="-position"]');
+      positionFields.forEach(function(field, index) {
+        field.value = index + 1;
+      });
+    }
+
+    function addForm() {
+      var formCount = parseInt($('#id_form-TOTAL_FORMS').val());
+      var $template = $('#empty-form-template').html();
+      var newFormHtml = $template.replace(/__prefix__/g, formCount);
+      $('#formset-container').append(newFormHtml);
+      $('#id_form-TOTAL_FORMS').val(formCount + 1);
+      updatePositions();
+    }
+  </script>
+  <form method="POST" enctype="multipart/form-data" onsubmit="updatePositions()">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    <div class="card">
+      <div class="card-header">
+        <h1>Добавление вопроса</h1>
+      </div>
+      <div class="card-body">
+        {% bootstrap_form form %}
+
+        <div id="formset-container">
+          {% for form in formset %}
+            <div class="card mt-3">
+              <div class="card-header">
+                <h2>Добавление ответа</h2>
+              </div>
+              <div class="card-body">
+                {% bootstrap_form form %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <template id="empty-form-template">
+          <div class="card mt-3">
+            <div class="card-header">
+              <h2>Добавление ответа</h2>
+            </div>
+            <div class="card-body">
+              {% bootstrap_form formset.empty_form %}
+            </div>
+          </div>
+        </template>
+
+        <br >
+        <button type="button" class="btn btn-primary" id="add-form" onclick="addForm()">Добавить ответ</button>
+      </div>
+    </div>
+    <br>
+    {% bootstrap_button button_type="submit" content="Добавить вопрос" %}
+  </form>
+{% endblock %}

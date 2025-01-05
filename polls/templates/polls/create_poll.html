@@ -1,24 +1,20 @@
+{% extends 'films/base.html' %}
+{% load django_bootstrap5 %}
 
 {% block content %}
-<div class="container">
-    <h1>Создать Опрос для Фильма "{{ film.name }}"</h1>
-    <form method="post" class="form">
-        {% csrf_token %}
-        {{ poll_form.as_p }}
-        {% for form in forms %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    {{ form.question_form.as_p }}
-                    <h3>Выборы для Вопроса</h3>
-                    {% for choice_form in form.choice_formset %}
-                        <div class="form-group">
-                            {{ choice_form.as_p }}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Создать Опрос</button>
-    </form>
-</div>
+<form method="POST" enctype="multipart/form-data">
+    <div class="card mt-5">
+        <div class="card-header">
+            <h1>Создание опроса</h1>
+        </div>
+        <div class="card-body">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <input type="hidden" name="film" value="{{ film.id }}" class="form-control">
+
+        </div>
+    </div>
+    <br>
+    {% bootstrap_button button_type="submit" content="Создать опрос" %}
+</form>
 {% endblock %}
