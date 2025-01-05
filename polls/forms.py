@@ -1,6 +1,6 @@
 from django import forms
 from .models import Poll, Question, Choice
-from django.forms import formset_factory
+from django.forms import formset_factory, modelformset_factory, BaseModelFormSet
 
 
 class QuestionForm(forms.ModelForm):
@@ -52,3 +52,10 @@ class QuestionnaireForm(forms.Form):
 
 
 ChoiceFormSet = formset_factory(ChoiceForm, extra=0, min_num=2, validate_min=True)
+
+
+class ChoiceUpdateFormSet(BaseModelFormSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for form in self.forms:
+            form.fields['DELETE'] = forms.BooleanField(required=False, label="Удалить")

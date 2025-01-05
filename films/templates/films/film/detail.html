@@ -127,9 +127,10 @@
           <div class="d-flex justify-content-end">
             {% if user == poll_item.poll.author %}
               <a href="{% url 'polls:create_question' poll_item.poll.id %}" class="btn btn-primary btn-sm mx-2">Добавить вопрос</a>
-              <a href="{% url 'polls:confirm_delete_poll' poll_item.poll.id %}" class="btn btn-danger btn-sm">Удалить опрос</a>
+              <a href="{% url 'polls:update_poll' poll_item.poll.id %}" class="btn btn-secondary btn-sm mx-2">Изменить порядок вопросов</a>
+              <a href="{% url 'polls:confirm_delete_poll' poll_item.poll.id %}" class="btn btn-danger btn-sm mx-2">Удалить опрос</a>
             {% endif %}
-              <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}" class="btn btn-link">Посмотреть статистику</a>
+              <a href="{% url 'polls:poll_statistics' poll_item.poll.id %}" class="btn btn-link mx-2">Посмотреть статистику</a>
           </div>
         </div>
         <div class="card-body">
@@ -140,9 +141,12 @@
               <div class="card mt-3">
                 <div class="card-header" id="question_{{ question.id }}" data-question-type="{{ question.question_type }}">
                   <b>{{ question.name }}</b>
+                    <div class="d-flex justify-content-end">
                   {% if user == poll_item.poll.author %}
-                    <a href="{% url 'polls:confirm_delete_question' question.id %}" class="btn btn-sm btn-danger float-end">Удалить вопрос</a>
+                    <a href="{% url 'polls:update_question' question.id %}" class="btn btn-sm btn-secondary mx-2">Изменить вопрос</a>
+                    <a href="{% url 'polls:confirm_delete_question' question.id %}" class="btn btn-sm btn-danger mx-2">Удалить вопрос</a>
                   {% endif %}
+                    </div>
                 </div>
                 <div class="card-body">
                   {% if question.question_type == "Один вариант ответа" %}

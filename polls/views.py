@@ -3,15 +3,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from films.models import Film
 
-from .forms import PollForm, QuestionForm, ChoiceForm, ChoiceFormSet
+from django.forms import modelformset_factory
+from django.forms.utils import ErrorList
+from .forms import PollForm, QuestionForm, ChoiceFormSet, ChoiceUpdateFormSet
 from .models import Poll, Question, Choice
-
-from django.views.generic import (
-    CreateView,
-    FormView,
-)
-from django.views.generic.detail import SingleObjectMixin
-from django.http import HttpResponseRedirect
 
 
 @login_required
@@ -61,6 +56,7 @@ def create_question(request, poll_id):
         'poll': poll,
     })
 
+
 @login_required
 def delete_question(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -88,6 +84,72 @@ def delete_poll(request, poll_id):
         poll.delete()
 
     return redirect('films:film_detail', id=poll.film.id)
+
+
+@login_required
+def update_poll(request, poll_id):
+    poll = get_object_or_404(Poll, id=poll_id)
+
+    if request.user != poll.author:
+        return redirect('films:film_detail', id=poll.film.id)
+
+    QuestionFormSet = modelformset_factory(Question, fields=('position',), extra=0)
+
+    if request.method == 'POST':
+        formset = QuestionFormSet(request.POST, queryset=poll.questions.all())
+        if formset.is_valid():
+            formset.save()
+
+            return redirect('films:film_detail', id=poll.film.id)
+    else:
+        formset = QuestionFormSet(queryset=poll.questions.all())
+
+    return render(request, 'polls/update_poll.html', {
+        'formset': formset,
+        'poll': poll,
+    })
+
+
+@login_required
+def update_question(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+
+    if request.user != question.poll.author:
+        return redirect('films:film_detail', id=question.poll.film.id)
+
+    ChoiceFormSet = modelformset_factory(
+        Choice,
+        formset=ChoiceUpdateFormSet,
+        fields=('position',),
+        extra=0,
+    )
+
+    if request.method == 'POST':
+        formset = ChoiceFormSet(request.POST, queryset=question.choice_set.all())
+        if formset.is_valid():
+            # Count non-deleted choices
+            non_deleted_choices = sum(1 for form in formset if not form.cleaned_data.get('DELETE'))
+            if non_deleted_choices < 2:
+                # Add a non-form error to the formset
+                formset._non_form_errors = ErrorList(["A question must have at least two choices."])
+            else:
+                # Save changes and delete marked choices
+                instances = formset.save(commit=False)
+                for instance in instances:
+                    instance.save()
+                # Process deletions
+                for form in formset:
+                    if form.cleaned_data.get('DELETE'):
+                        form.instance.delete()
+                return redirect('films:film_detail', id=question.poll.film.id)
+    else:
+        formset = ChoiceFormSet(queryset=question.choice_set.all())
+
+
+    return render(request, 'polls/update_question.html', {
+        'formset': formset,
+        'question': question,
+    })
 
 
 @login_required
