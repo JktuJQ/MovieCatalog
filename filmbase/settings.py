@@ -14,7 +14,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'signup.apps.SignupConfig',
     'dal',
-    'nested_formset',
     'dal_select2',
     'django_extensions',
     "django_bootstrap5",
