@@ -123,7 +123,7 @@
 <div class="card mt-3">
     <div class="card-header">
         <h2>{{ poll_item.poll.theme }}</h2>
-        {{ poll_item.poll.description }}
+        {{ poll_item.poll.description|linebreaksbr }} <small>от {{ poll_item.poll.created_at }}</small>
         <div class="d-flex justify-content-end">
             {% if user == poll_item.poll.author %}
             <a href="{% url 'polls:create_question' poll_item.poll.id %}" class="btn btn-primary btn-sm mx-2">Добавить
@@ -148,6 +148,7 @@
                 <div class="card-header" id="question_{{ question.id }}"
                      data-question-type="{{ question.question_type }}">
                     <b>{{ question.name }}</b>
+                    <small>Тип вопроса: {{ question.question_type }}</small>
                     <div class="d-flex justify-content-end">
                         {% if user == poll_item.poll.author %}
                         <a href="{% url 'polls:create_choice' question.id %}" class="btn btn-primary btn-sm mx-2">Добавить
