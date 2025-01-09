@@ -131,10 +131,13 @@ def film_list(request):
 def film_detail(request, id):
     film = get_object_or_404(Film, pk=id)
     user = request.user
-    polls = film.poll_set.all()
-    poll_list = []
 
-    completed = False
+    search_query = request.GET.get("q")
+    polls = film.poll_set.all()
+    if search_query is not None:
+        polls = polls.filter(theme__icontains=search_query)
+
+    poll_list = []
     for poll in polls:
         if user == poll.author:
             completed = True

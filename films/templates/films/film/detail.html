@@ -119,6 +119,17 @@
 {% endif %}
 {% if film.poll_set.exists %}
 <h2 class="mt-5">Опросы для этого фильма</h2>
+<form method="get" action="{% url 'films:film_detail' film.id %}" class="mb-4">
+    <div class="input-group mb-3">
+        <input type="text" name="q" class="form-control" placeholder="Поиск опросов по теме"
+               value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i>Поиск</button>
+        <a href="{% url 'films:film_detail' film.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-x-circle"></i> Сбросить
+        </a>
+    </div>
+</form>
+<br>
 {% for poll_item in poll_list %}
 <div class="card mt-3">
     <div class="card-header">
@@ -187,6 +198,12 @@
         </form>
     </div>
 </div>
+{% empty %}
+<div class="col-12 mt-3">
+    <div class="alert alert-info" role="alert">
+        Опросы не найдены.
+    </div>
+</div>
 {% endfor %}
 <style>
     a.disabled {
@@ -227,7 +244,12 @@
     });
 </script>
 {% else %}
-<p>Нет опросов для этого фильма.</p>
+<br>
+<div class="col-12 mt-3">
+    <div class="alert alert-info" role="alert">
+        Нет опросов для этого фильма.
+    </div>
+</div>
 {% endif %}
 <br>
 {% endblock %}

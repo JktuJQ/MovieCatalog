@@ -9,6 +9,19 @@ from .forms import PollForm, QuestionForm, ChoiceForm, ChoiceFormSet, ChoiceUpda
 from .models import Poll, Question, Choice
 
 
+def poll_list(request):
+    polls = Poll.objects.all()
+
+    search_query = request.GET.get('q')
+    if search_query is not None:
+        polls = polls.filter(theme__icontains=search_query)
+
+    context = {
+        'polls': polls,
+    }
+    return render(request, 'polls/poll_list.html', context)
+
+
 @login_required
 def create_poll(request, film_id):
     film = get_object_or_404(Film, pk=film_id)

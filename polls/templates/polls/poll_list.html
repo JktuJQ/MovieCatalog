@@ -1,0 +1,44 @@
+{% extends 'films/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Все опросы</h1>
+
+    <form method="get" action="{% url 'polls:polls' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Поиск опросов по теме" value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Поиск
+            </button>
+            <a href="{% url 'polls:polls' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-x-circle"></i> Сбросить
+        </a>
+        </div>
+    </form>
+
+    <div class="row">
+        {% for poll in polls %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ poll.theme }}</h5>
+                    <p class="card-text text-muted">
+                        Фильм: <strong>{{ poll.film.name }}</strong>
+                    </p>
+                    <a href="{% url 'films:film_detail' poll.film.id %}?q={{ poll.theme }}" class="btn btn-outline-primary">
+                        <i class="bi bi-film"></i> Перейти к опросу
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                Опросы не найдены.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
